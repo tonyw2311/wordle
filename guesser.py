@@ -2,6 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
 
 
 
@@ -11,17 +14,31 @@ page = requests.get(url)
 soup = BeautifulSoup(page.text, "html.parser")
 #print(soup)
 
+#Using chrome webdriver to access website
 driver = webdriver.Chrome('./chromedriver')
 driver.maximize_window() # For maximizing window
-driver.implicitly_wait(5) 
+driver.implicitly_wait(20) 
 driver.get(url)
 
-ps = driver.page_source
+
+
+script = 'text'
+#js = 'alert("Hello World")'
+#driver.execute_script(js)
+
+
+#ps = driver.page_source
 #xPath = ('//*[@id="fin-chartiq"]/div[12]')
-xPath = ('//*[@id="board"]/game-row[1]')
+xPath = ('//*[contains(@id="board","letters")]/game-row[1]')
+xPath = ('//*[@id="board"]/game-row[1]//div/game-tile[1]//div')
+#xPath = ('//*[@id="board"]/game-row[1]//div/game-tile[1]//div')
+#//*[@id="game"]/game-modal//div/div/div/game-icon//svg
+
 
 
 elem = driver.find_element(by=By.XPATH, value = xPath)
-print(elem.text)
+elem.send_keys('hello')
+elem.send_keys(Keys.RETURN)
+#print(elem.text)
 #driver.close()
 #data= {'water'}
