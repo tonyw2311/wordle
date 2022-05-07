@@ -15,7 +15,7 @@ driver.implicitly_wait(20)
 driver.get(url)
 
 #Sends word input to wordle
-word = 'water'
+word = 'adieu'
 xPath = ('/html/body')
 elem = driver.find_element(by=By.XPATH, value = xPath)
 elem.click()
