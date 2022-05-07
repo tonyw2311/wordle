@@ -23,15 +23,13 @@ elem.send_keys(word)
 elem.send_keys(Keys.RETURN)
 
 #evaluated_word = [elem.get_attribute("outerHTML") for elem in driver.execute_script("""return document.querySelector('game-app:nth-of-type(1)').shadowRoot.querySelector('game-row').shadowRoot.querySelectorAll('game-tile:nth-of-type(1)[letter]')""")]
-#print(evaluated_word)
-
 
 
 forbidden_list = []
 near_guess_list = []
 exact_list = ['#']*5
-
-for i in range(1,6):
+near_dict = {}
+for i in range(1,5):
     time.sleep(3)
 
     #nested shadow roots
@@ -39,7 +37,7 @@ for i in range(1,6):
     evaluated_word = [elem.get_attribute("outerHTML") for elem in driver.execute_script(script)]
     #evaluated word = ['<game-tile letter="h" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="e" evaluation="present" reveal=""></game-tile>', '<game-tile letter="l" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="l" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="o" evaluation="absent" reveal=""></game-tile>']
 
-    word, forbidden_list, near_guess_list,exact_list = g.guesser(evaluated_word,forbidden_list,near_guess_list,exact_list)
+    word, forbidden_list, near_guess_list,exact_list, near_dict = g.guesser(evaluated_word,forbidden_list,near_guess_list,exact_list, near_dict)
 
     elem.send_keys(word)
     elem.send_keys(Keys.RETURN)

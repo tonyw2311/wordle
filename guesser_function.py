@@ -1,16 +1,14 @@
-
-import sys
 import re
 
 def is_word_forbidden_to_use(word, forbidden_list):
     for char in forbidden_list:
-        if char != '#' and (char in word):
+        if (char in word):
             return True
     return False
 
-def is_word_using_all_near_guesses(word, near_guess_list):
-    for character in near_guess_list:
-        if character != '#' and character not in word:
+def is_word_using_all_near_guesses(word, near_guess_list, near_dict):
+    for index, char in enumerate(near_guess_list):
+        if (char not in word) or ((char in word) and (str(word.index(char)) in near_dict[char])):
             return False
     return True
 
@@ -21,33 +19,39 @@ def is_word_using_exact_guesses(word, guess_list):
     return True
 
 
-def guesser(word_guessed,forbidden_list,near_guess_list,exact_list):
-
+def guesser(word_guessed,forbidden_list,near_guess_list,exact_list,near_dict):
 
     #Iterates through the list given from webscraping and assigns them to appropriate values
     for index, letter in enumerate(word_guessed):
         letter_found = re.search('letter="(.*)" evaluation',letter).group(1)
         value_of_letter = re.search('evaluation="(.*)" reveal',letter).group(1)
+
         if value_of_letter == 'absent':
             forbidden_list.append(letter_found)
+
         if value_of_letter == 'present':
             near_guess_list.append(letter_found)
+            if letter_found in near_dict:
+                near_dict[letter_found] += str(index)
+            else:
+                near_dict[letter_found] = str(index)
+
         if value_of_letter == 'correct':
             exact_list[index] = letter_found
-    #print(exact_list,near_guess_list,forbidden_list)
+
 
     with open('words.txt','r') as reader:
         for word in reader:
             if is_word_forbidden_to_use(word, forbidden_list):
                 continue 
-
-            if not is_word_using_all_near_guesses(word,near_guess_list):
+            
+            if not is_word_using_all_near_guesses(word,near_guess_list, near_dict):
                 continue
             
             if not is_word_using_exact_guesses(word, exact_list):
                 continue
 
-            return word, forbidden_list, near_guess_list, exact_list
+            return word, forbidden_list, near_guess_list, exact_list, near_dict
             
 
 
