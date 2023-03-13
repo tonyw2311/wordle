@@ -15,29 +15,37 @@ driver.implicitly_wait(20)
 driver.get(url)
 
 #Sends word input to wordle
-word = 'adieu'
-xPath = ('/html/body')
+word = 'salet'
+xPath = ('/html/body/div/div/dialog/div/button')
 elem = driver.find_element(by=By.XPATH, value = xPath)
 elem.click()
+time.sleep(1)
+xPath = ('/html/body')
+elem = driver.find_element(by=By.XPATH, value = xPath)
 elem.send_keys(word)
 elem.send_keys(Keys.RETURN)
 
+
 #evaluated_word = [elem.get_attribute("outerHTML") for elem in driver.execute_script("""return document.querySelector('game-app:nth-of-type(1)').shadowRoot.querySelector('game-row').shadowRoot.querySelectorAll('game-tile:nth-of-type(1)[letter]')""")]
 
-
+""" //*[@id="wordle-app-game"]/div[1]/div/div[2]/div[5]/div """
+#//*[@id="wordle-app-game"]/div[1]/div/div[1]/div[1]/div
 forbidden_list = []
 near_guess_list = []
 exact_list = ['#']*5
 near_dict = {}
-for i in range(1,5):
-    time.sleep(3)
+for j in range (0,30,5):
+    time.sleep(2)
+    full_word =[]
+    for i in range(5):
+        #nested shadow roots- wordle no longer uses shadowroots
+        
+        script = "return document.querySelectorAll('.Tile-module_tile__UWEHN')[%s].ariaLabel"%str(i+j) #"""return document.querySelector('game-app').shadowRoot.querySelector('game-row:nth-of-type(%s)').shadowRoot.querySelectorAll('game-tile[letter]')""" %str(i)
+        evaluated_letter = driver.execute_script(script)
+        full_word.append(evaluated_letter)
+        #evaluated word = ['<game-tile letter="h" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="e" evaluation="present" reveal=""></game-tile>', '<game-tile letter="l" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="l" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="o" evaluation="absent" reveal=""></game-tile>']
 
-    #nested shadow roots
-    script = """return document.querySelector('game-app').shadowRoot.querySelector('game-row:nth-of-type(%s)').shadowRoot.querySelectorAll('game-tile[letter]')""" %str(i)
-    evaluated_word = [elem.get_attribute("outerHTML") for elem in driver.execute_script(script)]
-    #evaluated word = ['<game-tile letter="h" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="e" evaluation="present" reveal=""></game-tile>', '<game-tile letter="l" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="l" evaluation="absent" reveal=""></game-tile>', '<game-tile letter="o" evaluation="absent" reveal=""></game-tile>']
-
-    word, forbidden_list, near_guess_list,exact_list, near_dict = g.guesser(evaluated_word,forbidden_list,near_guess_list,exact_list, near_dict)
+    word, forbidden_list, near_guess_list,exact_list, near_dict = g.guesser(full_word,forbidden_list,near_guess_list,exact_list, near_dict)
 
     elem.send_keys(word)
     elem.send_keys(Keys.RETURN)

@@ -18,8 +18,39 @@ def is_word_using_exact_guesses(word, guess_list):
             return False
     return True
 
+def guesser(word,forbidden_list,near_guess_list,exact_list,near_dict):
 
-def guesser(word_guessed,forbidden_list,near_guess_list,exact_list,near_dict):
+    #Iterates through the list given from webscraping and assigns them to appropriate values
+    for index, letter_guessed  in enumerate(word):
+        letter_found = letter_guessed[0]
+        value_of_letter = letter_guessed[2:]
+        if value_of_letter == 'absent':
+            forbidden_list.append(letter_found)
+        if value_of_letter == 'present':
+            near_guess_list.append(letter_found)
+            if letter_found in near_dict:
+                near_dict[letter_found] += str(index)
+            else:
+                near_dict[letter_found] = str(index)
+        if value_of_letter == 'correct':
+            exact_list[index] = letter_found
+
+    with open('words.txt','r') as reader:
+        for word in reader:
+            if is_word_forbidden_to_use(word, forbidden_list):
+                continue 
+            
+            if not is_word_using_all_near_guesses(word,near_guess_list, near_dict):
+                continue
+            
+            if not is_word_using_exact_guesses(word, exact_list):
+                continue
+
+            return word, forbidden_list, near_guess_list, exact_list, near_dict
+
+
+#previous guesser function with shadowroot
+""" def guesser(word_guessed,forbidden_list,near_guess_list,exact_list,near_dict):
 
     #Iterates through the list given from webscraping and assigns them to appropriate values
     for index, letter in enumerate(word_guessed):
@@ -51,7 +82,7 @@ def guesser(word_guessed,forbidden_list,near_guess_list,exact_list,near_dict):
             if not is_word_using_exact_guesses(word, exact_list):
                 continue
 
-            return word, forbidden_list, near_guess_list, exact_list, near_dict
+            return word, forbidden_list, near_guess_list, exact_list, near_dict """
             
 
 
